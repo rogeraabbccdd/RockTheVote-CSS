@@ -972,7 +972,8 @@ namespace cs2_rockthevote
                     _localizer.Localize("emv.hud.menu-title"),
                     _currentVoteOptions,
                     option => Votes.TryGetValue(option, out int count) ? count : 0,
-                    clickVoting: _panoramaConfig.EnableClickVoting);
+                    clickVoting: _panoramaConfig.EnableClickVoting,
+                    getImageClass: option => _mapLister.Maps.FirstOrDefault(m => m.Name == option) is { } map ? CustomHud.MapImageClass(map) : null);
 
                 if (_activeVoteUsesPanorama)
                     _customHud.UpdateTimer(voteDuration);

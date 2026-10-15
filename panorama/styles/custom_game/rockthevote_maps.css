@@ -1,0 +1,4 @@
+/* RockTheVote map thumbnails for the panorama vote panel.
+   This stock file is empty, so the vote panel shows no thumbnails.
+   tools/sync_workshop_collection.py --addon <addon content folder> replaces it in your addon
+   with one that turns the thumbnails on (see README "Map thumbnails"). */
