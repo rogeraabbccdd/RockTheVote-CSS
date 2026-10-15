@@ -424,6 +424,24 @@ surf_rookie:3082548297
 surf_nyx (Tier 1, Linear):3129698096
 ```
 
+### Map thumbnails
+
+With `EndOfMapVote.MenuType` set to `panorama`, the vote panel can show a thumbnail on the left of each map's row. The pictures live in the workshop addon, not in `maplist.txt`.
+
+The server cannot send images to the panel at runtime: the client's custom HUD validator only allows `Panel`, `Label` and `Button` with basic attributes, and panorama CSS only accepts `file://`, `panel://` and `s2r://` URLs. So the server only gives every map row a class (`.rtv-mi-<workshopId>`, or `.rtv-mi-<map name>` for maps without an id), and the addon's `panorama/styles/custom_game/rockthevote_maps.css` decides what it shows. The stock file in this repo is empty, so the panel looks the same as before until you generate one. This needs addon revision 5 or newer.
+
+[tools/sync_workshop_collection.py](tools/sync_workshop_collection.py) generates it from a Steam Workshop collection:
+- adds the collection's maps that are missing from `maplist.txt` (existing names, comments and order are kept, a `maplist.txt.bak` is written first, and maps no longer in the collection are only reported)
+- downloads each map's workshop preview as a 128x72 PNG into the addon's `panorama/images/custom_game/rtv_maps/`
+- writes the addon's `rockthevote_maps.css`: one picture per PNG in `rtv_maps/`, the game's own screenshots for official maps (`de_dust2`, `cs_office`, ...), a placeholder for every other map, and wider rows to fit the thumbnail column
+
+```
+pip install pillow
+python tools/sync_workshop_collection.py --collection 3077158527 --maplist maplist.txt --addon "<CS2>/content/csgo_addons/<your addon>"
+```
+
+To give any map its own picture, put `<workshopId>.png` (or `<map name>.png`, lower case, for maps without an id) in `rtv_maps/` and run the script again. Then rebuild and republish the addon, copy `maplist.txt` to the server, and run `!reloadmaps`. Add `--compile` to compile the stylesheet and its PNGs with CS2's `resourcecompiler`, `--prune` to remove maps whose workshop item was removed or made private, `--dry-run` to preview the changes, and `--force` to download thumbnails again. See [tools/README.md](tools/README.md) for details.
+
 The map cooldown is written to `mapcooldown.txt` in the same folder so it survives restarts.
 
 ## Translations
