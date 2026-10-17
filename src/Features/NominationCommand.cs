@@ -226,15 +226,12 @@ namespace cs2_rockthevote
         }
 
         // Attempt to resolve the user's text into exactly one map. If 0 matches -> send "invalid" and return null.
-        // If > 1 matches -> show the chat based menu and return null. Otherwise -> return the single map name.
+        // If other maps also contain the text -> show a picker (exact match first, even when one name
+        // matches exactly, so "dust" doesn't silently nominate Dust over Dust2_Night) and return null.
+        // Otherwise -> return the single map name.
         private string? ResolveMapNameOrPrompt(CCSPlayerController player, string input, StringLocalizer localizer)
         {
-            // Exact match
             var exact = _mapLister.GetExactMapName(input);
-            if (exact is not null)
-                return exact;
-
-            // Find all "contains" matches
             var matches = _mapLister.GetMatchingMapNames(input);
 
             // No matches found
@@ -243,17 +240,27 @@ namespace cs2_rockthevote
                 player.PrintToChat(localizer.LocalizeWithPrefix("general.invalid-map"));
                 return null;
             }
-            // Found more than 1 match
-            if (matches.Count > 1)
+
+            // Exactly one candidate (the current map never counts as an alternative to an exact match)
+            if (exact is not null && matches.All(m => m.Equals(exact, StringComparison.OrdinalIgnoreCase) || IsCurrentMap(m)))
+                return exact;
+            if (exact is null && matches.Count == 1)
+                return matches[0];
+
+            bool IsExact(string name) => exact is not null && name.Equals(exact, StringComparison.OrdinalIgnoreCase);
+
+            if (UsePanoramaPanel)
             {
-                if (!UsePanoramaPanel
-                    || !_panel!.Open(player, [.. _mapLister.Maps.Where(m => matches.Contains(m.Name) && !IsCurrentMap(m.Name))], isSearch: true))
-                    ShowMultipleMatchesMenu(player, matches);
-                return null;
+                var candidates = _mapLister.Maps
+                    .Where(m => matches.Contains(m.Name) && !IsCurrentMap(m.Name))
+                    .OrderBy(m => IsExact(m.Name) ? 0 : 1)
+                    .ToList();
+                if (_panel!.Open(player, candidates, isSearch: true))
+                    return null;
             }
 
-            // Exactly one
-            return matches[0];
+            ShowMultipleMatchesMenu(player, [.. matches.OrderBy(m => IsExact(m) ? 0 : 1)]);
+            return null;
         }
 
         public List<string> NominationWinners()

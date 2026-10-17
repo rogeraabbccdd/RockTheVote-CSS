@@ -17,7 +17,7 @@ General purpose map voting plugin for CS2, built on CounterStrikeSharp.
 - **Rock the Vote.** `!rtv` in chat, or the built-in CS2 Panorama vote (F1 = Yes, F2 = No). Configurable pass percentage, cooldowns, min players/rounds, and an always-active mode with periodic chat reminders.
 - **End of Map Vote.** Triggers a set number of seconds or rounds before the map ends. Supports map cooldown, an "extend current map" option, and several menu types.
 - **Revote.** `!revote` during an active End of Map Vote reopens a frozen WASD menu (no exit) so the player can change their choice.
-- **Nominate.** `!nominate <map>` adds a map to the next vote. Partial name matching, conflict resolution for similar names (`surf_beginner`, `surf_beginner2`), configurable per-player limit.
+- **Nominate.** `!nominate <map>` adds a map to the next vote. Partial name matching, conflict resolution for similar names (`surf_beginner`, `surf_beginner2`): when other maps also contain the text, a picker opens even if one name matches exactly, with that map listed first, configurable per-player limit.
 - **Votemap.** `!votemap <map>` starts a vote to change to a specific map.
 - **Vote Extend.** `!ve` / `!voteextend` starts a vote to extend the current map, optionally via the Panorama F1/F2 vote.
 - **Extend.** `!extend 10` extends the current map by 10 minutes (admin).
