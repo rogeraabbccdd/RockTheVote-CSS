@@ -29,6 +29,7 @@ namespace cs2_rockthevote
         private readonly MapCooldown _mapCooldown;
         private readonly GameRules _gameRules;
         private readonly CustomHud _customHud;
+        private readonly NominatePanel _nominatePanel;
         private bool _activeVoteUsesPanorama = false;
         private Timer? Timer;
         private Timer? _nextVoteTimer;
@@ -79,6 +80,7 @@ namespace cs2_rockthevote
             TimeLimitManager timeLimitManager,
             GameRules gameRules,
             CustomHud customHud,
+            NominatePanel nominatePanel,
             ILogger<EndMapVoteManager> logger
         )
         {
@@ -92,6 +94,7 @@ namespace cs2_rockthevote
             _timeLimitManager = timeLimitManager;
             _gameRules = gameRules;
             _customHud = customHud;
+            _nominatePanel = nominatePanel;
             _logger = logger;
         }
 
@@ -959,6 +962,8 @@ namespace cs2_rockthevote
             }
 
             _pluginState.EofVoteHappening = true;
+            // Free every cursor held by an open nominate panel before the vote needs it
+            _nominatePanel.CloseAll();
             _currentVoteOptions.AddRange(voteOptions);
             RebuildSortedTopVotes();
             _canVote = ServerManager.ValidPlayerCount();

@@ -5,7 +5,7 @@
 	</styles>
 	<Panel class="rtv-vote-root" hittest="false">
 		<!-- Version marker: invisible in-game, visible in a decompile so a mounted addon's revision can be identified. Bump when editing. -->
-		<Label class="rtv-version" text="rockthevote revision 5" hittest="false" />
+		<Label class="rtv-version" text="rockthevote revision 6" hittest="false" />
 		<Panel id="rtv_vote_dialog" class="rtv-vote-dialog" hittest="false">
 			<Label id="rtv_header" class="rtv-vote-kicker" text="{s:rtv_header}" hittest="false" />
 			<Panel class="rtv-vote-options" hittest="false">
@@ -22,6 +22,21 @@
 			</Panel>
 			<Label id="rtv_timer" class="rtv-vote-timer" text="{s:rtv_timer}" hittest="false" />
 			<Button id="rtv_vote_close" class="rtv-vote-close"><Label class="rtv-vote-close-label" text="Close" hittest="false" /></Button>
+		</Panel>
+		<!-- Nominate panel: one shared entity, content set per player -->
+		<Panel id="rtv_nom_dialog" class="rtv-nom-dialog" hittest="false">
+			<Label id="rtv_nom_header" class="rtv-vote-kicker" text="{s:rtv_nom_header}" hittest="false" />
+			<Panel class="rtv-nom-grid" hittest="false">
+				<Panel id="rtv_nom_row_1" class="rtv-nom-row" hittest="false"><Button id="rtv_nom_card_1" class="rtv-nom-card"><Panel id="rtv_nom_img_1" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_1" class="rtv-nom-name" text="{s:rtv_nom_name_1}" hittest="false" /></Button><Button id="rtv_nom_card_2" class="rtv-nom-card"><Panel id="rtv_nom_img_2" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_2" class="rtv-nom-name" text="{s:rtv_nom_name_2}" hittest="false" /></Button><Button id="rtv_nom_card_3" class="rtv-nom-card"><Panel id="rtv_nom_img_3" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_3" class="rtv-nom-name" text="{s:rtv_nom_name_3}" hittest="false" /></Button><Button id="rtv_nom_card_4" class="rtv-nom-card"><Panel id="rtv_nom_img_4" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_4" class="rtv-nom-name" text="{s:rtv_nom_name_4}" hittest="false" /></Button></Panel>
+				<Panel id="rtv_nom_row_2" class="rtv-nom-row" hittest="false"><Button id="rtv_nom_card_5" class="rtv-nom-card"><Panel id="rtv_nom_img_5" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_5" class="rtv-nom-name" text="{s:rtv_nom_name_5}" hittest="false" /></Button><Button id="rtv_nom_card_6" class="rtv-nom-card"><Panel id="rtv_nom_img_6" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_6" class="rtv-nom-name" text="{s:rtv_nom_name_6}" hittest="false" /></Button><Button id="rtv_nom_card_7" class="rtv-nom-card"><Panel id="rtv_nom_img_7" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_7" class="rtv-nom-name" text="{s:rtv_nom_name_7}" hittest="false" /></Button><Button id="rtv_nom_card_8" class="rtv-nom-card"><Panel id="rtv_nom_img_8" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_8" class="rtv-nom-name" text="{s:rtv_nom_name_8}" hittest="false" /></Button></Panel>
+				<Panel id="rtv_nom_row_3" class="rtv-nom-row" hittest="false"><Button id="rtv_nom_card_9" class="rtv-nom-card"><Panel id="rtv_nom_img_9" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_9" class="rtv-nom-name" text="{s:rtv_nom_name_9}" hittest="false" /></Button><Button id="rtv_nom_card_10" class="rtv-nom-card"><Panel id="rtv_nom_img_10" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_10" class="rtv-nom-name" text="{s:rtv_nom_name_10}" hittest="false" /></Button><Button id="rtv_nom_card_11" class="rtv-nom-card"><Panel id="rtv_nom_img_11" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_11" class="rtv-nom-name" text="{s:rtv_nom_name_11}" hittest="false" /></Button><Button id="rtv_nom_card_12" class="rtv-nom-card"><Panel id="rtv_nom_img_12" class="rtv-vote-img rtv-nom-img" hittest="false" /><Label id="rtv_nom_name_12" class="rtv-nom-name" text="{s:rtv_nom_name_12}" hittest="false" /></Button></Panel>
+			</Panel>
+			<Panel class="rtv-nom-foot" hittest="false">
+				<Button id="rtv_nom_prev" class="rtv-nom-btn"><Label class="rtv-vote-close-label" text="&lt;" hittest="false" /></Button>
+				<Label id="rtv_nom_page" class="rtv-nom-page" text="{s:rtv_nom_page}" hittest="false" />
+				<Button id="rtv_nom_next" class="rtv-nom-btn"><Label class="rtv-vote-close-label" text="&gt;" hittest="false" /></Button>
+				<Button id="rtv_nom_close" class="rtv-vote-close rtv-nom-close"><Label class="rtv-vote-close-label" text="Close" hittest="false" /></Button>
+			</Panel>
 		</Panel>
 		<!-- RTV in-progress toast  -->
 		<Panel id="rtv_toast" class="rtv-toast" hittest="false">

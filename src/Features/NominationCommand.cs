@@ -41,6 +41,7 @@ namespace cs2_rockthevote
         private MapCooldown _mapCooldown;
         private MapLister _mapLister;
         private Plugin? _plugin;
+        private NominatePanel? _panel;
 
         public NominationCommand(MapLister mapLister, GameRules gamerules, StringLocalizer localizer, PluginState pluginState, MapCooldown mapCooldown)
         {
@@ -52,6 +53,17 @@ namespace cs2_rockthevote
         }
 
         public void MarkMapExtended() => _mapExtended = true;
+
+        // Set by NominatePanel.OnLoad (the panel depends on this class, not the other way round)
+        public void AttachPanel(NominatePanel panel) => _panel = panel;
+
+        private bool UsePanoramaPanel => _panel is not null && ConfigValue.Is(_nomConfig.MenuType, "panorama");
+
+        public IReadOnlyCollection<string> NominationsOf(int slot) =>
+            Nominations.TryGetValue(slot, out var noms) ? noms : [];
+
+        private bool IsCurrentMap(string mapName) =>
+            MapNameHelper.GetBaseName(mapName).Equals(Server.MapName, StringComparison.OrdinalIgnoreCase);
 
         public void OnMapStart(string map)
         {
@@ -103,13 +115,15 @@ namespace cs2_rockthevote
 
             if (string.IsNullOrEmpty(mapName))
             {
+                if (UsePanoramaPanel && _panel!.Open(player, [.. _mapLister.Maps.Where(m => !IsCurrentMap(m.Name))], isSearch: false))
+                    return;
+
                 var title = _localizer.Localize("nominate.title");
                 var menuType = ConfigValue.Resolve(MenuManager.MenuTypesList, _nomConfig.MenuType, MenuTypeManager.GetDefaultMenu());
 
                 var menu = MenuManager.MenuByType(menuType, title, _plugin!);
 
-                foreach (var m in _mapLister.Maps!
-                            .Where(x => !MapNameHelper.GetBaseName(x.Name).Equals(Server.MapName, StringComparison.OrdinalIgnoreCase)))
+                foreach (var m in _mapLister.Maps!.Where(x => !IsCurrentMap(x.Name)))
                 {
                     bool isCooldown = _mapCooldown.IsMapInCooldown(m.Name);
                     string label = isCooldown ? $"{ChatColors.Grey}{m.Name}" : m.Name;
@@ -132,10 +146,11 @@ namespace cs2_rockthevote
             Nominate(player, resolved);
         }
 
-        public void Nominate(CCSPlayerController player, string map)
+        // Returns true when the nomination was recorded
+        public bool Nominate(CCSPlayerController player, string map)
         {
             if (player == null || !player.IsValid)
-                return;
+                return false;
 
             var slot = player.Slot;
             var mapName = map.Trim();
@@ -152,14 +167,14 @@ namespace cs2_rockthevote
             if (_gamerules.WarmupRunning && !_nomConfig.EnabledInWarmup)
             {
                 player.PrintToChat(_localizer.LocalizeWithPrefix("general.validation.warmup"));
-                return;
+                return false;
             }
 
             // Enforce per-player nomination limit (0 = unlimited)
             if (_nomConfig.NominateLimit > 0 && userNoms.Count >= _nomConfig.NominateLimit)
             {
                 player.PrintToChat(_localizer.LocalizeWithPrefix("nominate.limit", _nomConfig.NominateLimit));
-                return;
+                return false;
             }
 
             // Prevent nominating the same map multiple times by this player
@@ -170,21 +185,21 @@ namespace cs2_rockthevote
                     .Count(m => m.Equals(mapName, StringComparison.OrdinalIgnoreCase));
 
                 player.PrintToChat(_localizer.LocalizeWithPrefix("nominate.already-nominated", mapName, voteCount));
-                return;
+                return false;
             }
 
             // Can't nominate the current map
             if (baseName.Equals(Server.MapName, StringComparison.OrdinalIgnoreCase))
             {
                 player.PrintToChat(_localizer.LocalizeWithPrefix("general.validation.current-map"));
-                return;
+                return false;
             }
 
             // Can't nominate a map on cooldown
             if (_mapCooldown.IsMapInCooldown(baseName))
             {
                 player.PrintToChat(_localizer.LocalizeWithPrefix("general.validation.map-played-recently"));
-                return;
+                return false;
             }
 
             // ✅ All validations passed — record the nomination now
@@ -195,6 +210,7 @@ namespace cs2_rockthevote
                 .Count(m => m.Equals(mapName, StringComparison.OrdinalIgnoreCase));
 
             Server.PrintToChatAll(_localizer.LocalizeWithPrefix("nominate.nominated", player.PlayerName, mapName, totalVotes));
+            return true;
         }
 
         private void ShowMultipleMatchesMenu(CCSPlayerController player, List<string> matchingMaps)
@@ -230,7 +246,9 @@ namespace cs2_rockthevote
             // Found more than 1 match
             if (matches.Count > 1)
             {
-                ShowMultipleMatchesMenu(player, matches);
+                if (!UsePanoramaPanel
+                    || !_panel!.Open(player, [.. _mapLister.Maps.Where(m => matches.Contains(m.Name) && !IsCurrentMap(m.Name))], isSearch: true))
+                    ShowMultipleMatchesMenu(player, matches);
                 return null;
             }
 

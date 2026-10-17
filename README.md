@@ -23,8 +23,9 @@ General purpose map voting plugin for CS2, built on CounterStrikeSharp.
 - **Extend.** `!extend 10` extends the current map by 10 minutes (admin).
 
 ### Menus & Display
-- **Menu types.** `ChatMenu`, `CenterHtmlMenu`, `WasdMenu`, `ConsoleMenu` (via CS2MenuManager), plus the plugin's own `HudMenu` and clickable `panorama` menu for the End of Map Vote.
+- **Menu types.** `ChatMenu`, `CenterHtmlMenu`, `WasdMenu`, `ConsoleMenu` (via CS2MenuManager), plus the plugin's own `HudMenu` and clickable `panorama` menus for the End of Map Vote and nominations.
 - **Panorama vote menu.** A clickable custom HUD panel shipped in a workshop addon. Click to vote, live vote counters, voted-row highlight, winner flash, countdown timer, configurable position/sizes/colors. See [Panorama HUD addon](#panorama-hud-addon).
+- **Panorama nominate menu.** `!nominate` opens a clickable grid of map cards (12 per page) with thumbnails; `!nominate <text>` shows only the matching maps. Players browse independently.
 - **Panorama RTV toast.** A small HUD pop-up while an `!rtv` is collecting votes, showing votes required and instructions.
 - **Countdowns.** Chat (interval based) or HUD (per second) countdown for every vote type.
 - **Hints & sounds.** Optional center-screen hint and configurable sound when a vote starts.
@@ -104,7 +105,7 @@ General purpose map voting plugin for CS2, built on CounterStrikeSharp.
 
 ### Panorama HUD addon
 
-Only needed if you set `EndOfMapVote.MenuType` to `panorama` or enable `Rtv.EnablePanoramaToast`.
+Only needed if you set `EndOfMapVote.MenuType` or `Nominate.MenuType` to `panorama`, or enable `Rtv.EnablePanoramaToast`. The nominate menu needs addon revision 6 or newer.
 
 The clickable panel is a `custom_hud_layout` Panorama panel. Its sources live in this repo under [panorama/](panorama/) (`layout/custom_game/rockthevote.xml` and `styles/custom_game/rockthevote.css`). The compiled `.vxml_c` / `.vcss_c` files must be shipped to clients in a workshop addon, and `PanoramaMenu.AddonName` must point at the layout path inside that addon.
 
@@ -203,7 +204,7 @@ Things to know:
 | --- | --- | --- |
 | `Enabled` | `true` | Enable `!nominate` |
 | `EnabledInWarmup` | `true` | Allow nominations during warmup |
-| `MenuType` | `"WasdMenu"` | `ChatMenu`, `CenterHtmlMenu`, `WasdMenu`, `ConsoleMenu`, or `HudMenu` |
+| `MenuType` | `"WasdMenu"` | `ChatMenu`, `CenterHtmlMenu`, `WasdMenu`, `ConsoleMenu`, `HudMenu`, or `panorama` (clickable map cards with thumbnails, also used when `!nominate <text>` matches several maps; open panels close when a map vote starts) |
 | `NominateLimit` | `1` | Nominations per player per map |
 | `Permission` | `"@css/vip,@css/nominate"` | Flags allowed to nominate. Empty = anyone |
 
@@ -426,7 +427,7 @@ surf_nyx (Tier 1, Linear):3129698096
 
 ### Map thumbnails
 
-With `EndOfMapVote.MenuType` set to `panorama`, the vote panel can show a thumbnail on the left of each map's row. The pictures live in the workshop addon, not in `maplist.txt`.
+With `EndOfMapVote.MenuType` set to `panorama`, the vote panel can show a thumbnail on the left of each map's row, and with `Nominate.MenuType` set to `panorama` the nominate cards show the same pictures. The pictures live in the workshop addon, not in `maplist.txt`.
 
 The server cannot send images to the panel at runtime: the client's custom HUD validator only allows `Panel`, `Label` and `Button` with basic attributes, and panorama CSS only accepts `file://`, `panel://` and `s2r://` URLs. So the server only gives every map row a class (`.rtv-mi-<workshopId>`, or `.rtv-mi-<map name>` for maps without an id), and the addon's `panorama/styles/custom_game/rockthevote_maps.css` decides what it shows. The stock file in this repo is empty, so the panel looks the same as before until you generate one. This needs addon revision 5 or newer.
 

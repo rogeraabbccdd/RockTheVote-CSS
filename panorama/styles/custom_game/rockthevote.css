@@ -372,6 +372,135 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Nominate panel                                                     */
+/* ------------------------------------------------------------------ */
+
+/* Hidden for everyone; the server adds rtv-nom-open per player */
+.rtv-nom-dialog
+{
+	visibility: collapse;
+	horizontal-align: center;
+	vertical-align: center;
+	flow-children: down;
+	padding: 18px 22px;
+	background-color: #10161de8;
+	border: 1px solid #5db2d1cc;
+	box-shadow: #000000aa 0px 0px 30px 0px;
+}
+
+.rtv-nom-dialog.rtv-nom-open
+{
+	visibility: visible;
+}
+
+.rtv-nom-grid
+{
+	flow-children: down;
+}
+
+.rtv-nom-row
+{
+	flow-children: right;
+}
+
+.rtv-nom-card
+{
+	width: 140px;
+	flow-children: down;
+	padding: 5px;
+	margin: 0px 6px 6px 0px;
+	background-color: #20313d99;
+	border: 1px solid #78a7ba44;
+	transition-property: background-color, border;
+	transition-duration: 0.1s;
+}
+
+.rtv-nom-card:hover
+{
+	background-color: #315061ff;
+	border: 1px solid #96d8f2ff;
+}
+
+/* Shares .rtv-vote-img, so rockthevote_maps.css turns the picture on */
+.rtv-vote-img.rtv-nom-img
+{
+	horizontal-align: center;
+	vertical-align: top;
+}
+
+.rtv-nom-name
+{
+	width: 128px;
+	margin-top: 4px;
+	color: #a9f5a9ff;
+	font-size: 14px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* Map on cooldown: still clickable, the server explains why it is refused */
+.rtv-nom-card.rtv-nom-disabled
+{
+	opacity: 0.4;
+}
+
+/* Empty slots on the last page: invisible but still taking up space, so the panel keeps
+   its size on every page. Clicks on them are ignored by the server. */
+.rtv-nom-card.rtv-nom-empty
+{
+	opacity: 0;
+}
+
+/* Map this player already nominated */
+.rtv-nom-card.rtv-nom-mine
+{
+	background-color: #8a6d2be0;
+	border: 1px solid #f2d27fff;
+}
+
+.rtv-nom-foot
+{
+	width: 100%;
+	flow-children: right;
+	margin-top: 8px;
+}
+
+.rtv-nom-btn
+{
+	padding: 6px 14px;
+	background-color: #20313d;
+	border: 1px solid #78a7ba66;
+	transition-property: background-color, border;
+	transition-duration: 0.1s;
+}
+
+.rtv-nom-btn:hover
+{
+	background-color: #315061ff;
+	border: 1px solid #96d8f2ff;
+}
+
+/* First page's "<" and last page's ">" */
+.rtv-nom-btn.rtv-nom-btn-off
+{
+	opacity: 0.3;
+}
+
+.rtv-nom-page
+{
+	vertical-align: center;
+	margin: 0px 12px;
+	color: #eaf4f7ff;
+	font-size: 16px;
+}
+
+.rtv-vote-close.rtv-nom-close
+{
+	ignore-parent-flow: true;
+	horizontal-align: right;
+}
+
+/* ------------------------------------------------------------------ */
 /* RTV in-progress toast                                              */
 /* ------------------------------------------------------------------ */
 
