@@ -163,6 +163,8 @@ def main():
     ap.add_argument("--addon", required=True, help="the workshop addon's content folder"
                                                    " (the one that contains panorama/layout/custom_game/rockthevote.xml)")
     ap.add_argument("--prune", action="store_true", help="remove maplist lines whose workshop item was removed or made private")
+    ap.add_argument("--remove-uncollected", action="store_true", help="remove workshop maps that are not in the collection"
+                                                                  " (maps without a workshop id are kept)")
     ap.add_argument("--compile", action="store_true", help="compile rockthevote_maps.css and its PNGs with CS2's"
                                                      " resourcecompiler (needs the addon inside <CS2>/content/csgo_addons)")
     ap.add_argument("--force", action="store_true", help="re-download thumbnails that already exist")
@@ -212,6 +214,7 @@ def main():
     listed_ids = {p[1] for p in map(parse_line, lines) if p and p[1]}
     # Listed maps outside the collection need their own lookup to tell "removed" from "just not collected"
     available = set(details) | set(item_details(sorted(listed_ids - set(details))))
+    collection = set(ids)
     listed = set()
     stripped = 0
     pruned = []
@@ -222,6 +225,10 @@ def main():
             new_lines.append(line)
             continue
         name, fid = parsed
+        if fid and fid not in collection and args.remove_uncollected:
+            pruned.append(f"{name}:{fid}")
+            print(f"  - {name}:{fid} is not in the collection, removed")
+            continue
         if fid and fid not in available:
             if args.prune:
                 pruned.append(f"{name}:{fid}")
@@ -244,7 +251,7 @@ def main():
         print(f"  + {name}:{fid}")
 
     for fid in sorted((listed & available) - set(ids)):
-        print(f"  ? {fid} is in {maplist.name} but not in the collection (left unchanged)")
+        print(f"  ? {fid} is in {maplist.name} but not in the collection (use --remove-uncollected to remove it)")
 
     print(f"{maplist.name}: {len(added)} added, {len(pruned)} removed, {stripped} old image columns removed")
     if args.dry_run:

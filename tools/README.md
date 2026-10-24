@@ -43,6 +43,7 @@ python tools/sync_workshop_collection.py --collection <collection id> --maplist 
 | `--maplist` | Path to `maplist.txt`. Default: `maplist.txt` in the current folder |
 | `--addon` | The addon's content folder, the one that holds `panorama/layout/custom_game/rockthevote.xml` (required) |
 | `--prune` | Remove maplist lines whose workshop item was removed or made private |
+| `--remove-uncollected` | Remove workshop maps that are not in the collection. Maps without a workshop id (official maps) are kept |
 | `--compile` | After writing the stylesheet, compile it and its images with `resourcecompiler.exe` |
 | `--force` | Download thumbnails again even if they already exist |
 | `--dry-run` | Show what would change without writing anything |
@@ -54,7 +55,7 @@ python tools/sync_workshop_collection.py --collection <collection id> --maplist 
 3. **Updates `maplist.txt`.**
    - Maps in the collection but not in the maplist are appended at the end. The name comes from the workshop title, e.g. `Night Motel` becomes `Night_Motel`.
    - Existing names, comments and order are kept. You can rename maps; later syncs will not overwrite your names.
-   - Maps that are not in the collection but still exist on the workshop are only reported (lines starting with `?`).
+   - Maps that are not in the collection but still exist on the workshop are only reported (lines starting with `?`), unless you pass `--remove-uncollected`.
    - Before any change, the original file is copied to `maplist.txt.bak`.
 4. **Writes `<addon>/panorama/styles/custom_game/rockthevote_maps.css`.**
    - Turns the thumbnail column on and widens each row by 140px.
