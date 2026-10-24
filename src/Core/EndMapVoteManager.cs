@@ -448,6 +448,13 @@ namespace cs2_rockthevote
                         return;
                     }
 
+                    // MatchEnd normally comes from EventCsWinPanelMatch; the poll is only a safety net
+                    // for an empty server, which never reaches the win panel. With players on a
+                    // round-based server the estimate below compares one round's time with the whole
+                    // match and goes negative, which changed the map right after the vote.
+                    if (trigger == MapChangeTrigger.MatchEnd && ServerManager.ValidPlayerCount() > 0)
+                        return;
+
                     _debugLogger.LogInformation("[RTV.MapChange] Poll tick: computing remaining seconds. map={Map} trigger={Trigger}", winnerMapName, trigger);
                     int remainingSeconds = ComputeRemainingSecondsForIgnoreWinConditions();
                     _debugLogger.LogInformation(
